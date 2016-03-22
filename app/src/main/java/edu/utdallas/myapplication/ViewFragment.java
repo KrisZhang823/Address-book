@@ -25,6 +25,7 @@ import android.widget.Toast;
  */
 public class ViewFragment extends Fragment implements DatePickerFragment.NoticeDialogListener{
     private int mode = 0;//0 = view 1 = edit 2 = add
+
     private TextView firstName;
     private TextView lastName ;
     private TextView phone;
@@ -54,9 +55,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     @Override
     public  void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
-        
-
+        initPerson();
         if (mode == 0){
             initView();
         }else if(mode == 1){
@@ -74,6 +73,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         NavigationListen(toolbar);
 
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setImageResource(R.drawable.edit50);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,13 +93,16 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         });
 
     }
-
-    public void initView(){
+    public  void initPerson(){
         firstName = (TextView) getView().findViewById(R.id.firstname);
         lastName = (TextView) getView().findViewById(R.id.lastName);
         phone = (TextView) getView().findViewById(R.id.phone);
         email = (TextView) getView().findViewById(R.id.email);
         date = (TextView) getView().findViewById(R.id.date);
+    }
+
+    public void initView(){
+
 
         background = firstName.getBackground();
         firstNameKey = firstName.getKeyListener();
