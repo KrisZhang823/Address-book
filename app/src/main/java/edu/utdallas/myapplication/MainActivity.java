@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +50,24 @@ public class MainActivity extends AppCompatActivity {
 
         PersonAdapter adapter = new PersonAdapter(this, personList);
 
+        FileIO.init(getApplicationContext());
+        // Generate some test data in personList
+        personList = generateData();
+        try {
+            FileIO.saveFile(personList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        personList = null;
+        try {
+            personList = FileIO.loadFile();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(personList == null) {
+            personList = new ArrayList<>();
+        }
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
