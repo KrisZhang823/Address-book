@@ -26,4 +26,5 @@
         android:id="@+id/phone"
         android:layout_below="@id/firstName"
         android:layout_marginTop="5dp"/>
+
 </RelativeLayout>

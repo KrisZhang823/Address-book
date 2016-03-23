@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Person class, contain main information entries
  * Created by Peiyang on 3/20/16.
  */
-public class Person  implements Serializable{
+public class Person implements Serializable{
     private String firstName;
     private String lastName;
     private String phone;
