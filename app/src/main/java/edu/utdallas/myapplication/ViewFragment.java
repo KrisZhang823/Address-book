@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.KeyListener;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by kriszhang on 3/21/16.
@@ -50,6 +48,8 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     private int curYear;
     private int curMonth;
     private int curDay;
+
+    private Toast mToast;   // Keep track of toast
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -108,7 +108,9 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                     mode = 1;
                     fab.setImageResource(R.drawable.ic_close_black_24dp);
                     initEdit();
-                    Toast.makeText(getActivity().getApplicationContext(), "Now editing..", Toast.LENGTH_SHORT).show();
+                    if(mToast != null)  mToast.cancel();
+                    mToast = Toast.makeText(getActivity().getApplicationContext(), "Now editing..", Toast.LENGTH_SHORT);
+                    mToast.show();
                 } else if (mode == 1) {
                     getContact();
                     if (isModified()) {
@@ -334,12 +336,9 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     }
 
     private boolean isModified(){
-        if (person.getFirstName().equals(curPerson.getFirstName()) && person.getLastName().equals(curPerson.getLastName())
-                && person.getEmail().equals(curPerson.getEmail()) && person.getPhone().equals( curPerson.getPhone())&&
-                day == curDay&&month == curMonth && year == curYear){
-            return false;
-        }
-        return true;
+        return !(person.getFirstName().equals(curPerson.getFirstName()) && person.getLastName().equals(curPerson.getLastName())
+                && person.getEmail().equals(curPerson.getEmail()) && person.getPhone().equals(curPerson.getPhone()) &&
+                day == curDay && month == curMonth && year == curYear);
     }
 
     // Return 0 if all correct, 1 if no input for first name, 2 if future date
@@ -400,14 +399,20 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             if (isModified()) {
                 switch (isLegalContact()) {
                     case 0:
-                        Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT).show();
+                        if(mToast != null)  mToast.cancel();
+                        mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT);
+                        mToast.show();
                         exitAndSave();
                         return true;
                     case 1:
-                        Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
+                        if(mToast != null)  mToast.cancel();
+                        mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
+                        mToast.show();
                         return false;
                     case 2:
-                        Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT).show();
+                        if(mToast != null)  mToast.cancel();
+                        mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
+                        mToast.show();
                         return false;
                 }
             }else{
@@ -415,7 +420,9 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                 initView();
                 FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
                 fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
-                Toast.makeText(getActivity().getApplicationContext(), "No change made", Toast.LENGTH_SHORT).show();
+                if(mToast != null)  mToast.cancel();
+                mToast = Toast.makeText(getActivity().getApplicationContext(), "No change made", Toast.LENGTH_SHORT);
+                mToast.show();
                 mode = 0;
                 return true;
             }
@@ -423,14 +430,20 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             getContact();
             switch (isLegalContact()) {
                 case 0:
-                    Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT).show();
+                    if(mToast != null)  mToast.cancel();
+                    mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT);
+                    mToast.show();
                     exitAndSave();
                     return true;
                 case 1:
-                    Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
+                    if(mToast != null)  mToast.cancel();
+                    mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
+                    mToast.show();
                     return false;
                 case 2:
-                    Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT).show();
+                    if(mToast != null)  mToast.cancel();
+                    mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
+                    mToast.show();
                     return false;
             }
         }

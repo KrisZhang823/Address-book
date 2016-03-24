@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,13 +34,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Initialize file
         FileIO.init(getApplicationContext());
-        // Generate some test data in personList
+
         try {
             personList = FileIO.loadFile();
         }  catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Generate some test data in personList
+        //personList = generateData();
+
         PersonAdapter adapter = new PersonAdapter(this, personList);
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(adapter);
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 Bundle extra = new Bundle();
                 extra.putSerializable("person", person);
                 extra.putInt("mode", 0);
-                extra.putInt("position",position);
+                extra.putInt("position", position);
                 intent.putExtras(extra);
                 startActivityForResult(intent, 1000);
             }
