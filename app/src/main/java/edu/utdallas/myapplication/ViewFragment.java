@@ -155,15 +155,18 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            String msg = "";
+            int select = 0;
             switch (menuItem.getItemId()) {
                 case R.id.action_delete:
-                    msg += "Click delete";
+                    select = 1;
                     break;
+                case R.id.action_save:
+                    select = 2;
             }
-            if(msg.equals("Click delete")) {
+            // Delete
+            if(select == 1) {
                 //dialog
-                if(mode != 2){
+                if(mode != 2) {
                     new AlertDialog.Builder(getActivity())
                             .setMessage("Are you sure you want to delete this contact and exit?")
                             .setCancelable(false)
@@ -178,7 +181,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                             })
                             .setNegativeButton("No", null)
                             .show();
-                }else{
+                } else {
                     new AlertDialog.Builder(getActivity())
                             .setMessage("Are you sure you want to cancel adding a contact?")
                             .setCancelable(false)
@@ -190,7 +193,73 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                             .setNegativeButton("No", null)
                             .show();
                 }
-
+            }
+            // Press save
+            if(select == 2) {
+                //view contact mode
+                if (mode == 0) {
+                    if(mToast != null)  mToast.cancel();
+                    mToast = Toast.makeText(getActivity().getApplicationContext(), "No change made!", Toast.LENGTH_SHORT);
+                    mToast.show();
+                    exitAndSave();
+                    return true;
+                }
+                //edit contact mode
+                if (mode == 1) {
+                    initPerson();
+                    getContact();
+                    //If modified save and exit
+                    if (isModified()) {
+                        switch (isLegalContact()) {
+                            case 0:
+                                if(mToast != null)  mToast.cancel();
+                                mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT);
+                                mToast.show();
+                                exitAndSave();
+                                return true;
+                            case 1:
+                                if(mToast != null)  mToast.cancel();
+                                mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
+                                mToast.show();
+                                return false;
+                            case 2:
+                                if(mToast != null)  mToast.cancel();
+                                mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
+                                mToast.show();
+                                return false;
+                        }
+                    }else{
+                        //If no modification back to view mode
+                        initView();
+                        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                        fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+                        if(mToast != null)  mToast.cancel();
+                        mToast = Toast.makeText(getActivity().getApplicationContext(), "No change made", Toast.LENGTH_SHORT);
+                        mToast.show();
+                        mode = 0;
+                        return true;
+                    }
+                } else {
+                    getContact();
+                    switch (isLegalContact()) {
+                        case 0:
+                            if(mToast != null)  mToast.cancel();
+                            mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT);
+                            mToast.show();
+                            exitAndSave();
+                            return true;
+                        case 1:
+                            if(mToast != null)  mToast.cancel();
+                            mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
+                            mToast.show();
+                            return false;
+                        case 2:
+                            if(mToast != null)  mToast.cancel();
+                            mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
+                            mToast.show();
+                            return false;
+                    }
+                }
             }
             return true;
         }
@@ -238,6 +307,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         email.setBackground(null);
 
         date.setText(transformDate(year, month, day));
+        date.setOnClickListener(null);
     }
 
     public void initAdd(){
@@ -386,67 +456,47 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
 
     // Return true will enable back, otherwise disable back
     public boolean onBack() {
-        //view contact mode
         if (mode == 0) {
             exitAndSave();
             return true;
-        }
-        //edit contact mode
-        if (mode == 1) {
-            initPerson();
+        } else if (mode == 1) {
             getContact();
-            //If modified save and exit
             if (isModified()) {
-                switch (isLegalContact()) {
-                    case 0:
-                        if(mToast != null)  mToast.cancel();
-                        mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT);
-                        mToast.show();
-                        exitAndSave();
-                        return true;
-                    case 1:
-                        if(mToast != null)  mToast.cancel();
-                        mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
-                        mToast.show();
-                        return false;
-                    case 2:
-                        if(mToast != null)  mToast.cancel();
-                        mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
-                        mToast.show();
-                        return false;
-                }
-            }else{
-                //If no modification back to view mode
-                initView();
-                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-                fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
-                if(mToast != null)  mToast.cancel();
-                mToast = Toast.makeText(getActivity().getApplicationContext(), "No change made", Toast.LENGTH_SHORT);
-                mToast.show();
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Are you sure you want to discard this modification?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mode = 0;
+                                initView();
+                                //exitAndSave();
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            } else {
                 mode = 0;
-                return true;
+                if(mToast != null)  mToast.cancel();
+                mToast = Toast.makeText(getActivity().getApplicationContext(), "No change made!", Toast.LENGTH_SHORT);
+                mToast.show();
+                initView();
+                final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
             }
         } else {
-            getContact();
-            switch (isLegalContact()) {
-                case 0:
-                    if(mToast != null)  mToast.cancel();
-                    mToast = Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT);
-                    mToast.show();
-                    exitAndSave();
-                    return true;
-                case 1:
-                    if(mToast != null)  mToast.cancel();
-                    mToast = Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT);
-                    mToast.show();
-                    return false;
-                case 2:
-                    if(mToast != null)  mToast.cancel();
-                    mToast = Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT);
-                    mToast.show();
-                    return false;
-            }
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Are you sure you want to discard this add?")
+                    .setCancelable(true)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //delete person
+                            getActivity().finish();
+                            exitAndSave();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
-        return true;
+        return false;
     }
 }

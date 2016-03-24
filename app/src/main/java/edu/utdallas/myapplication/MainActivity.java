@@ -37,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
         // Initialize file
         FileIO.init(getApplicationContext());
 
-        try {
-            personList = FileIO.loadFile();
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            personList = FileIO.loadFile();
+//        }  catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        // Generate some test data in personList
-        //personList = generateData();
+        // Generate some test data in personList and sort
+        personList = generateData();
+        Collections.sort(personList);
 
         PersonAdapter adapter = new PersonAdapter(this, personList);
         ListView list = (ListView) findViewById(R.id.list);
@@ -145,18 +146,18 @@ public class MainActivity extends AppCompatActivity {
      */
     private ArrayList<Person> generateData() {
         ArrayList<Person> list = new ArrayList<>();
-        list.add(new Person("Abby", "Lee", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Amanda", "Jackson", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Bob", "Zhang", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Kevin", "Mosby", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Danny", "Green", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Tony", "Parker", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Tim", "Duncan", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Kevin", "Leonard", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Alan", "Smith", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Marco", "Reus", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Robert", "Lewandowski", "12345","example@gmail.com",2016,3,22));
-        list.add(new Person("Mats", "Hummels", "12345","example@gmail.com",2016,3,22));
+        list.add(new Person("Abby", "Lee", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Amanda", "Jackson", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Bob", "Zhang", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Kevin", "Mosby", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Danny", "Green", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Tony", "Parker", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Tim", "Duncan", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Kevin", "Leonard", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Alan", "Smith", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Marco", "Reus", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Robert", "Lewandowski", "12345","example@gmail.com",2016,2,22));
+        list.add(new Person("Mats", "Hummels", "12345","example@gmail.com",2016,2,22));
         return list;
     }
 }
