@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +38,6 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     private KeyListener lastNameKey;
     private KeyListener phoneKey;
     private KeyListener emailKey;
-    private KeyListener dateKey;
     private Drawable background;
     private Fragment thisFragment;
 
@@ -81,8 +81,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     public  void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.back48);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Add back button
+
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
         NavigationListen(toolbar);
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
@@ -90,13 +92,13 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
 
         if (mode == 0){
             initView();
-            fab.setImageResource(R.drawable.edit50);
+            fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
         }else if(mode == 1){
             initEdit();
-            fab.setImageResource(R.drawable.ic_clear_black_48dp);
+            fab.setImageResource(R.drawable.ic_close_black_24dp);
         }else{
             initAdd();
-            fab.setImageResource(R.drawable.ic_clear_black_48dp);
+            fab.setImageResource(R.drawable.ic_close_black_24dp);
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,9 +106,9 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             public void onClick(View view) {
                 if (mode == 0) {
                     mode = 1;
-                    fab.setImageResource(R.drawable.ic_clear_black_48dp);
+                    fab.setImageResource(R.drawable.ic_close_black_24dp);
                     initEdit();
-                    Toast.makeText(getActivity().getApplicationContext(), "Edit Contact!.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Now editing..", Toast.LENGTH_SHORT).show();
                 } else if (mode == 1) {
                     getContact();
                     if (isModified()) {
@@ -116,7 +118,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         mode = 0;
-                                        fab.setImageResource(R.drawable.edit50);
+                                        fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                                         initView();
                                     }
                                 })
@@ -124,7 +126,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                                 .show();
                     } else {
                         mode = 0;
-                        fab.setImageResource(R.drawable.edit50);
+                        fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                         initView();
                     }
                 } else {
@@ -135,7 +137,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
                                 public void onClick(DialogInterface dialog, int id) {
                                     //delete person
                                     mode = 0;
-                                    fab.setImageResource(R.drawable.edit50);
+                                    fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                                     getActivity().finish();
                                 }
                             })
@@ -192,52 +194,17 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         }
     };
 
-
     //back to last view
     public void NavigationListen(Toolbar toolbar){
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //view contact mode
-                if (mode == 0) {
-                    getActivity().finish();
-                }
-                //edit contact mode
-                else if (mode == 1) {
-                    initPerson();
-                    getContact();
-                    //If modified save and exit
-                    if (isModified()) {
-                        if (isLegalContact()){
-                            Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT).show();
-                            exitAndSave();
-                        }else{
-                            Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
-                        }
-                    }else{
-                        //If no modification back to view mode
-                        initView();
-                        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-                        fab.setImageResource(R.drawable.edit50);
-                        mode = 0;
-                    }
-                } else {
-                    getContact();
-                    if (isLegalContact()){
-                        Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT).show();
-                        exitAndSave();
-                    }else{
-                        Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
-                    }
-
-
-                }
+                onBack();
             }
         });
     }
 
-
-    public  void initPerson(){
+    public void initPerson(){
         firstName = (TextView) getView().findViewById(R.id.firstname);
         lastName = (TextView) getView().findViewById(R.id.lastName);
         phone = (TextView) getView().findViewById(R.id.phone);
@@ -251,12 +218,7 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         lastNameKey = lastName.getKeyListener();
         phoneKey = phone.getKeyListener();
         emailKey = email.getKeyListener();
-        date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //toast
-            }
-        });
+
         firstName.setText(person.getFirstName());
         firstName.setKeyListener(null);
         firstName.setBackground(null);
@@ -273,37 +235,32 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         email.setKeyListener(null);
         email.setBackground(null);
 
-        onDateSet(person.getAddYear(), person.getAddMonth(), person.getAddDay());
-        date.setKeyListener(null);
-        date.setBackground(null);
+        date.setText(transformDate(year, month, day));
     }
+
     public void initAdd(){
         firstName.setHint("First Name");
         lastName.setHint("Last Name");
         phone.setHint("Phone Number");
-        email.setHint("Example@gmail.com");
-        date.setHint("MM/DD/YYYY");
-        date.setKeyListener(null);
+        email.setHint("example@gmail.com");
 
-        final DatePickerFragment datePicker = new DatePickerFragment();
-        datePicker.setDefaultDate(year, month, day);
-        onDateSet(year, month, day);
-        String str = transformDate(year,month,day);
-        date.setText(str);
+        date.setText(transformDate(year, month, day));
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final DatePickerFragment datePicker = new DatePickerFragment();
+                datePicker.setDefaultDate(year, month, day);
                 datePicker.setCallBackFragment(thisFragment);
                 datePicker.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
     }
+
     public void initEdit(){
         firstName.setHint("First Name");
         lastName.setHint("Last Name");
         phone.setHint("Phone Number");
-        email.setHint("Example@gmail.com");
-        date.setHint("MM/DD/YYYY");
+        email.setHint("example@gmail.com");
 
         firstName.setKeyListener(firstNameKey);
         firstName.setBackground(background);
@@ -320,16 +277,13 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePicker = new DatePickerFragment();
-                datePicker.setDefaultDate(person.getAddYear(), person.getAddMonth(), person.getAddDay());
+                final DatePickerFragment datePicker = new DatePickerFragment();
+                datePicker.setDefaultDate(year, month, day);
                 datePicker.setCallBackFragment(thisFragment);
                 datePicker.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
-        date.setBackground(background);
     }
-
-
 
     // Called when a date is picked
     public void onDateSet(int year, int month, int day) {
@@ -388,11 +342,25 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         return true;
     }
 
-    private  boolean isLegalContact(){
-        if(firstName.getText().toString().length()>0){
-            return true;
+    // Return 0 if all correct, 1 if no input for first name, 2 if future date
+    private int isLegalContact(){
+        if(firstName.getText().toString().length() <= 0){
+            return 1;
         }
-        return false;
+        // Check date(should not be future)
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        if(curYear > year) {
+            return 2;
+        } else if(curMonth > month) {
+            return 2;
+        } else if(curDay > day){
+            return 2;
+        } else {
+            return 0;
+        }
     }
 
     private void exitAndSave(){
@@ -417,5 +385,55 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         }
     }
 
-
+    // Return true will enable back, otherwise disable back
+    public boolean onBack() {
+        //view contact mode
+        if (mode == 0) {
+            exitAndSave();
+            return true;
+        }
+        //edit contact mode
+        if (mode == 1) {
+            initPerson();
+            getContact();
+            //If modified save and exit
+            if (isModified()) {
+                switch (isLegalContact()) {
+                    case 0:
+                        Toast.makeText(getActivity().getApplicationContext(), "Contact Saved!", Toast.LENGTH_SHORT).show();
+                        exitAndSave();
+                        return true;
+                    case 1:
+                        Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    case 2:
+                        Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT).show();
+                        return false;
+                }
+            }else{
+                //If no modification back to view mode
+                initView();
+                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                fab.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+                Toast.makeText(getActivity().getApplicationContext(), "No change made", Toast.LENGTH_SHORT).show();
+                mode = 0;
+                return true;
+            }
+        } else {
+            getContact();
+            switch (isLegalContact()) {
+                case 0:
+                    Toast.makeText(getActivity().getApplicationContext(), "Contact Added!", Toast.LENGTH_SHORT).show();
+                    exitAndSave();
+                    return true;
+                case 1:
+                    Toast.makeText(getActivity().getApplicationContext(), "Please Enter a Name!", Toast.LENGTH_SHORT).show();
+                    return false;
+                case 2:
+                    Toast.makeText(getActivity().getApplicationContext(), "You cannot select future date!", Toast.LENGTH_SHORT).show();
+                    return false;
+            }
+        }
+        return true;
+    }
 }
