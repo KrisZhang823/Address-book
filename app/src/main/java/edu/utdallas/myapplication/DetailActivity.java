@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private ViewFragment viewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +23,12 @@ public class DetailActivity extends AppCompatActivity {
 
         //show edit page
         FragmentManager fragmentManager = getFragmentManager();
-        ViewFragment view_fragment = new ViewFragment();
+        viewFragment = new ViewFragment();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.contacts, view_fragment, "view_fragment");
-        fragmentTransaction.show(view_fragment);
+        fragmentTransaction.add(R.id.contacts, viewFragment, "view_fragment");
+        fragmentTransaction.show(viewFragment);
         fragmentTransaction.commit();
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -49,4 +47,10 @@ public class DetailActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (viewFragment.onBack()) {
+            super.onBackPressed();
+        }
+    }
 }

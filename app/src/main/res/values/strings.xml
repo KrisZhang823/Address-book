@@ -3,6 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_person_list">Persons</string>
     <string name="title_person_detail">Person Detail</string>
-    <string name="title_activity_add_person">AddPerson</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Contact Detail</string>
 </resources>

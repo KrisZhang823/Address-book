@@ -19,8 +19,8 @@ import Adapter.PersonAdapter;
  * Created by Peiyang on 3/20/16.
  */
 public class MainActivity extends AppCompatActivity {
-    FileIO fileIO = new FileIO();
     private ArrayList<Person> personList;
+
     /* Initialize main activity on start
      * Author: Peiyang Shangguan
      * Created on: 03/20/2016
@@ -46,9 +46,6 @@ public class MainActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Toast.makeText(getApplicationContext(), "Item "+position+" clicked.", Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                 Person person = personList.get(position);
                 Bundle extra = new Bundle();
@@ -57,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 extra.putInt("position",position);
                 intent.putExtras(extra);
                 startActivityForResult(intent, 1000);
-
-
             }
         });
     }
@@ -131,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             extra.putInt("mode",2);
             intent.putExtras(extra);
             startActivityForResult(intent, 1000);
-            Toast.makeText(getApplicationContext(), "Add button clicked.", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
