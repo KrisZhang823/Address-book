@@ -1,8 +1,22 @@
 
+<<<<<<< Updated upstream
+=======
+local.properties
+
+.gradle/2.8/taskArtifacts/cache.properties.lock
+
+*.lock
+
+.gradle/2.8/taskArtifacts/fileSnapshots.bin
+
+.gradle/2.8/taskArtifacts/taskArtifacts.bin
+
+>>>>>>> Stashed changes
 .idea/misc.xml
 
 .idea/workspace.xml
 
+<<<<<<< Updated upstream
 local.properties
 
 build/intermediates/dex-cache/cache.xml
@@ -12,3 +26,28 @@ build/intermediates/dex-cache/cache.xml
 .idea/workspace.xml
 
 .gradle/2.8/taskArtifacts/cache.properties.lock
+=======
+app/app.iml
+
+app/app.iml
+
+build/intermediates/dex-cache/cache.xml
+
+local.properties
+>>>>>>> Stashed changes
+
+.gradle/2.8/taskArtifacts/cache.properties.lock
+
+.gradle/2.8/taskArtifacts/fileHashes.bin
+
+.gradle/2.8/taskArtifacts/fileSnapshots.bin
+
+.gradle/2.8/taskArtifacts/taskArtifacts.bin
+
+.idea/workspace.xml
+
+build/intermediates/dex-cache/cache.xml
+
+local.properties
+
+.gradle/2.8/taskArtifacts/fileHashes.bin
