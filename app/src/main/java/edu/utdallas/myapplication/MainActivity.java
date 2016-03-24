@@ -1,29 +1,17 @@
 package edu.utdallas.myapplication;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import Adapter.PersonAdapter;
 
 /**
@@ -31,9 +19,8 @@ import Adapter.PersonAdapter;
  * Created by Peiyang on 3/20/16.
  */
 public class MainActivity extends AppCompatActivity {
-
+    FileIO fileIO = new FileIO();
     private ArrayList<Person> personList;
-
     /* Initialize main activity on start
      * Author: Peiyang Shangguan
      * Created on: 03/20/2016
@@ -45,31 +32,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Generate some test data in personList
-        personList = generateData();
-
-        PersonAdapter adapter = new PersonAdapter(this, personList);
-
         FileIO.init(getApplicationContext());
         // Generate some test data in personList
-        personList = generateData();
-        try {
-            FileIO.saveFile(personList);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        personList = null;
         try {
             personList = FileIO.loadFile();
-        } catch (FileNotFoundException e) {
+        }  catch (IOException e) {
             e.printStackTrace();
         }
-
-        if(personList == null) {
-            personList = new ArrayList<>();
-        }
+        PersonAdapter adapter = new PersonAdapter(this, personList);
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(adapter);
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -77,37 +50,56 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Item "+position+" clicked.", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-
-
                 Person person = personList.get(position);
-//                person.setFirstName("Yue");
-//                person.setLastName("Zhang");
-//                person.setEmail("example@gmail.com");
-//                person.setPhone("4692745048");
-//                person.setAddDay(12);
-//                person.setAddMonth(3);
-//                person.setAddYear(2016);
-
                 Bundle extra = new Bundle();
-                extra.putSerializable("person",person);
-                extra.putInt("mode",0);
-
+                extra.putSerializable("person", person);
+                extra.putInt("mode", 0);
+                extra.putInt("position",position);
                 intent.putExtras(extra);
-                startActivity(intent);
+                startActivityForResult(intent, 1000);
 
 
             }
         });
+    }
 
-//        // Initialize fab
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+    /**
+     * 所有的Activity对象的返回值都是由这个方法来接收
+     * requestCode:    表示的是启动一个Activity时传过去的requestCode值
+     * resultCode：表示的是启动后的Activity回传值时的resultCode值
+     * data：表示的是启动后的Activity回传过来的Intent对象
+     * zhangyue
+     */
+
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1000 && resultCode == 1001)
+        {
+            //get person
+            Person person = (Person)data.getExtras().getSerializable("person");
+            String mode = data.getExtras().getString("saveMode");
+            if (mode.equals("save")){
+                personList.set(data.getExtras().getInt("position"),person);
+            }else if (mode.equals("add")){
+                personList.add(person);
+            }
+        }
+        //delete one contact
+        if (requestCode == 1000 && resultCode == 1002){
+            personList.remove(data.getExtras().getInt("position"));
+        }
+        //save data list
+        try {
+            FileIO.saveFile(personList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //refresh
+        PersonAdapter adapter = new PersonAdapter(this, personList);
+        ListView list = (ListView) findViewById(R.id.list);
+        list.setAdapter(adapter);
     }
 
     /* Create menu on action bar
@@ -138,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle extra = new Bundle();
             extra.putInt("mode",2);
             intent.putExtras(extra);
-            startActivity(intent);
+            startActivityForResult(intent, 1000);
             Toast.makeText(getApplicationContext(), "Add button clicked.", Toast.LENGTH_SHORT).show();
             return true;
         }
