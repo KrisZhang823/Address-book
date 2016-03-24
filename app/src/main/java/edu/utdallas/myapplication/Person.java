@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Person class, contain main information entries
  * Created by Peiyang on 3/20/16.
  */
-public class Person implements Serializable{
+public class Person implements Serializable,Comparable<Person>{
     private String firstName;
     private String lastName;
     private String phone;
@@ -90,6 +90,12 @@ public class Person implements Serializable{
 
     public void setAddYear(int addYear) {
         this.addYear = addYear;
+    }
+
+    public int compareTo(Person other) {
+
+        return firstName.toUpperCase().compareTo(other.firstName.toUpperCase());
+
     }
 
 }

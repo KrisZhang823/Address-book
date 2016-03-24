@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import Adapter.PersonAdapter;
 
 /**
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1000 && resultCode == 1002){
             personList.remove(data.getExtras().getInt("position"));
         }
+        Collections.sort(personList);
         //save data list
         try {
             FileIO.saveFile(personList);
