@@ -18,11 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Calendar;
 
-/**
- * Created by kriszhang on 3/21/16.
+/* The page of showing,editing and adding a new Contact
+ * Author: Yue Zhang
+ * Created on: 03/20/2016
  */
 public class ViewFragment extends Fragment implements DatePickerFragment.NoticeDialogListener{
     private int mode = 0;//0 = view 1 = edit 2 = add
@@ -52,6 +52,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
     private Toast mToast;   // Keep track of toast
 
     @Override
+    /* Create the fragment view
+     * Author: Yue Zhang
+     * Created on: 03/20/2016
+     */
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view, container, false);
@@ -76,7 +80,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         }
         return view;
     }
-
+    /* Set listeners after the view is created
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     @Override
     public  void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
@@ -100,7 +107,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             initAdd();
             fab.setImageResource(R.drawable.ic_close_black_24dp);
         }
-
+        /* Editing and cancel button
+        * Author: Yue Zhang
+        * Created on: 03/20/2016
+        */
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,6 +162,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         });
     }
 
+    /* Save or delete button on the toolbar
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
@@ -265,7 +279,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         }
     };
 
-    //back to last view
+    /* Back button
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void NavigationListen(Toolbar toolbar){
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,6 +292,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         });
     }
 
+    /* Get info from the current view
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void initPerson(){
         firstName = (TextView) getView().findViewById(R.id.firstname);
         lastName = (TextView) getView().findViewById(R.id.lastName);
@@ -283,6 +304,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         date = (TextView) getView().findViewById(R.id.date);
     }
 
+    /* Initilize viewing mode of contact details
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void initView(){
         background = firstName.getBackground();
         firstNameKey = firstName.getKeyListener();
@@ -310,6 +335,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         date.setOnClickListener(null);
     }
 
+    /* Initialize adding screen
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void initAdd(){
         firstName.setHint("First Name");
         lastName.setHint("Last Name");
@@ -327,7 +356,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             }
         });
     }
-
+    /* Initialize modify screen
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void initEdit(){
         firstName.setHint("First Name");
         lastName.setHint("Last Name");
@@ -357,7 +389,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         });
     }
 
-    // Called when a date is picked
+    /* Called when a date is picked
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void onDateSet(int year, int month, int day) {
         // Update birth date
 
@@ -372,6 +407,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         date.setText(str);
     }
 
+    /* Transfer date into goodlooking form like "March 22 2016"
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public String transformDate(int year,int month,int day){
         String str = "";
         switch (month) {
@@ -392,6 +431,11 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         return str;
     }
 
+
+    /* Retrieve data from edit or add Screen and store at curPerson
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     private void getContact() {
         curPerson.setFirstName(firstName.getText().toString());
         curPerson.setLastName(lastName.getText().toString());
@@ -404,14 +448,21 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         curPerson.setAddMonth(curMonth);
         curPerson.setAddDay(curDay);
     }
-
+    /* Check if the contact info is modified
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     private boolean isModified(){
         return !(person.getFirstName().equals(curPerson.getFirstName()) && person.getLastName().equals(curPerson.getLastName())
                 && person.getEmail().equals(curPerson.getEmail()) && person.getPhone().equals(curPerson.getPhone()) &&
                 day == curDay && month == curMonth && year == curYear);
     }
 
-    // Return 0 if all correct, 1 if no input for first name, 2 if future date
+
+    /* Return 0 if all correct, 1 if no input for first name, 2 if future date
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     private int isLegalContact(){
         if(firstName.getText().toString().length() <= 0){
             return 1;
@@ -431,7 +482,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
             return 0;
         }
     }
-
+    /* Exit edit screen and save
+   * Author: Yue Zhang
+   * Created on: 03/20/2016
+   */
     private void exitAndSave(){
         initPerson();
         if (mode == 0){
@@ -454,7 +508,10 @@ public class ViewFragment extends Fragment implements DatePickerFragment.NoticeD
         }
     }
 
-    // Return true will enable back, otherwise disable back
+    /* Return true will enable back, otherwise disable back
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public boolean onBack() {
         if (mode == 0) {
             exitAndSave();

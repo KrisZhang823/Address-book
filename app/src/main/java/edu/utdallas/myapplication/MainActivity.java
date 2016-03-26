@@ -37,14 +37,14 @@ public class MainActivity extends AppCompatActivity {
         // Initialize file
         FileIO.init(getApplicationContext());
 
-//        try {
-//            personList = FileIO.loadFile();
-//        }  catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            personList = FileIO.loadFile();
+        }  catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Generate some test data in personList and sort
-        personList = generateData();
+        //personList = generateData();
         Collections.sort(personList);
 
         PersonAdapter adapter = new PersonAdapter(this, personList);
@@ -67,11 +67,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 所有的Activity对象的返回值都是由这个方法来接收
-     * requestCode:    表示的是启动一个Activity时传过去的requestCode值
-     * resultCode：表示的是启动后的Activity回传值时的resultCode值
-     * data：表示的是启动后的Activity回传过来的Intent对象
-     * zhangyue
+     * after the last Activity is finished
+     *  Created by Yue on 3/20/16.
      */
 
     @Override
@@ -94,13 +91,15 @@ public class MainActivity extends AppCompatActivity {
             personList.remove(data.getExtras().getInt("position"));
         }
         Collections.sort(personList);
+        Collections.sort(personList);
+        Collections.sort(personList);
         //save data list
         try {
             FileIO.saveFile(personList);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //refresh
+        //refresh contacts list
         PersonAdapter adapter = new PersonAdapter(this, personList);
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(adapter);

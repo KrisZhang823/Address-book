@@ -14,6 +14,10 @@ public class DetailActivity extends AppCompatActivity {
     private ViewFragment viewFragment;
 
     @Override
+     /* Create the view of editing activity and add a fragment
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -31,6 +35,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     @Override
+     /* Add menu icons to toolbar
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.menu_detail, menu);
@@ -38,6 +46,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     @Override
+    /* Add click listener of toolbar
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId())
         {
@@ -48,6 +60,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     @Override
+    /* Add menu icons to toolbar
+    * Author: Yue Zhang
+    * Created on: 03/20/2016
+    */
     public void onBackPressed() {
         if (viewFragment.onBack()) {
             super.onBackPressed();
